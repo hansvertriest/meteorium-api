@@ -1,0 +1,42 @@
+{
+  "name": "meteorium-api",
+  "version": "1.0.0",
+  "description": "Find the live project here at [the Meteroium](www.meteorium.space).<br> CAMS-data references:<br> P. Jenniskens, J. Baggaley, I. Crumpton, P. Aldous, P. Pokorny, D. Janches, P. S. Gural, D. Samuels, J. Albers, A. Howell, C. Johannink, M. Breukers, M. Odeh, N. Moskovitz, J. Collison, S. Ganju, 2018. A survey of southern hemisphere meteor showers. Planetary Space Science 154, 21–29.",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "prebuild": "npx eslint && tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart": "yarn run build",
+    "start": "NODE_ENV=development node .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "yarn nodemon -e ts --exec yarn start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hansvertriest/meteorium.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hansvertriest/meteorium/issues"
+  },
+  "homepage": "https://github.com/hansvertriest/meteorium#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dayjs": "^1.10.6",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "http": "*",
+    "nodemon": "^2.0.20",
+    "pg": "^8.7.1",
+    "ts-node": "^10.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.6.1",
+    "@types/pg": "^8.6.1",
+    "eslint": "^8.26.0",
+    "jest": "^27.0.6",
+    "node-fetch": "^2.6.6",
+    "supertest": "^6.1.6"
+  }
+}
