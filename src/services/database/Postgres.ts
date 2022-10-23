@@ -5,16 +5,15 @@ import { Pool } from 'pg';
 import { IPostgresConfig } from '../config/config.types.js';
 
 export default class Postgres {
-    private config: IPostgresConfig;
-    public pool: Pool;
+  private config: IPostgresConfig;
+  public pool: Pool;
 
-    constructor(config: IPostgresConfig) {
-        this.config = config;
-        this.createPool();
+  constructor(config: IPostgresConfig) {
+    this.config = config;
+    this.createPool();
+  }
 
-    }
-
-    private createPool = () => {
-        this.pool = new Pool({connectionString: this.config.conectionString});
-    }
+  private createPool = () => {
+    this.pool = new Pool({ connectionString: this.config.conectionString });
+  };
 }

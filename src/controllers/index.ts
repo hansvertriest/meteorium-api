@@ -1,7 +1,4 @@
-import ShowerController from "./ShowerController.js";
+import ShowerController from './ShowerController.js';
 import ObservationController from './ObservationController.js';
 
-export {
-    ShowerController,
-    ObservationController
-}
+export { ShowerController, ObservationController };

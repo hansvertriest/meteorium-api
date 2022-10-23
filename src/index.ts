@@ -13,26 +13,26 @@ import { IConfig } from './services/config/config.types.js';
 const config: IConfig = new Config();
 
 // Set timezone to GMT+0000
-process.env.TZ = 'Africa/Abidjan'
+process.env.TZ = 'Africa/Abidjan';
 
 try {
-    // Create a postgres pool
-    const pg = new Postgres(config.postgres);
-    const pool: Pool =  pg.pool;
+  // Create a postgres pool
+  const pg = new Postgres(config.postgres);
+  const pool: Pool = pg.pool;
 
-    // create application
-    const app: App = new App(config, pool);
-    app.start();
+  // create application
+  const app: App = new App(config, pool);
+  app.start();
 
-    // Stop all running processes
-    const stopAllProcesses = async () => {
-        app.stop();
+  // Stop all running processes
+  const stopAllProcesses = async () => {
+    app.stop();
 
-        console.log('All processes were terminated')
-    };
+    console.log('All processes were terminated');
+  };
 
-    process.on('SIGINT', () => stopAllProcesses());
-    process.on('SIGTERM', () => stopAllProcesses());
+  process.on('SIGINT', () => stopAllProcesses());
+  process.on('SIGTERM', () => stopAllProcesses());
 } catch (error) {
-    console.log(error);
+  console.log(error);
 }
