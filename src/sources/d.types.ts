@@ -1,4 +1,7 @@
-import { Pool } from 'pg';
+export enum Source {
+  GlobalMeteorNetwork = 'GMN',
+  Cams = 'CAMS',
+}
 
 export type GMNRecord = {
   beginningDate: Date;
@@ -52,9 +55,3 @@ export type GMNRecord = {
   numberOfStations: number;
   participatingStations: string[];
 };
-
-// export interface ISource<RawRecord, NormalizedRecord> {
-//     // createDbTable: {(): Promise<void>}
-//     fetchLatest: {(): Promise<RawRecord[]>};
-//     // parseRecords: {(records: RawRecord[]): NormalizedRecord[]};
-// }
