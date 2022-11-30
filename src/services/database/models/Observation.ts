@@ -1,9 +1,8 @@
 // Node
-import { Sequelize, DataTypes } from 'sequelize';
-import { Source } from '../../../sources/d.types';
+import { Sequelize, DataTypes, ModelDefined, Model } from 'sequelize';
+import { Source } from '../../../sources/d.types.js';
 
-type Observation = {
-  id: number;
+export type ObservationType = {
   time: Date;
   date: Date;
   t_begin: number;
@@ -21,13 +20,14 @@ type Observation = {
 };
 
 export default class ObservationModel {
-  private model: any;
+  private model: ModelDefined<ObservationType, ObservationType>;
 
   constructor(sq: Sequelize) {
-    const config: Record<keyof Observation, any> = {
+    const config: Record<keyof ObservationType | 'id', any> = {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
+        primaryKey: true,
       },
       time: {
         type: DataTypes.TIME,

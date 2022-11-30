@@ -1,9 +1,9 @@
 // Node
-const dotenv = require('dotenv');
+import * as dotenv from 'dotenv';
 dotenv.config({ path: `.env.${process.env.NODE_ENV === 'development' ? 'local' : ''}` });
 
 // types
-import { IServerConfig, IConfig, IPostgresConfig } from './config.types.js';
+import { IServerConfig, IConfig, IPostgresConfig } from './config.types';
 
 export default class Config implements IConfig {
   public server: IServerConfig;

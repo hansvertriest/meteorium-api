@@ -6,17 +6,21 @@ import dayjs from 'dayjs';
 // Helpers
 import { convertToLegacyFormat, convertDateToLegacy } from '../helpers/convertToLegacyFormat.js';
 import { getDeltaDegreeOfVisibilityCone } from '../helpers/calculations.js';
+import Postgres from '../services/database/Postgres.js';
 
 // Types
 import { IObservationWithShower, IObservationWithShowerLegacy, IShowerAtLocationLegacy } from '../../d.types.js';
+import { QueryTypes } from 'sequelize';
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export default class ObservationController {
   private pool: Pool;
+  private db: Postgres;
 
-  constructor(pool: Pool) {
+  constructor(pool: Pool, db: Postgres) {
     this.pool = pool;
+    this.db = db;
   }
 
   getAtDate = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {

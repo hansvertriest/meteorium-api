@@ -2,7 +2,7 @@
 import { Pool } from 'pg';
 
 // Classes
-import App from './App.js';
+import App from './app.js';
 import Config from './services/config/Config.js';
 import DataBase from './services/database/Postgres.js';
 
@@ -21,7 +21,7 @@ try {
   const pool: Pool = db.pool;
 
   // create application
-  const app: App = new App(config, pool);
+  const app: App = new App(config, pool, db);
   app.start();
 
   // Stop all running processes

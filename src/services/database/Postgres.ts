@@ -1,5 +1,6 @@
 // Node
-import { Pool } from 'pg';
+import pkg from 'pg';
+const { Pool } = pkg;
 import { Sequelize } from 'sequelize';
 
 // Classes
@@ -10,7 +11,7 @@ import { IPostgresConfig } from '../config/config.types.js';
 
 export default class DataBase {
   private config: IPostgresConfig;
-  public pool: Pool; // deprecated
+  public pool: any; // deprecated
   public sequelize: Sequelize;
 
   // models
@@ -20,7 +21,12 @@ export default class DataBase {
 
   constructor(config: IPostgresConfig) {
     this.config = config;
-    this.sequelize = new Sequelize(config.conectionString);
+    this.sequelize = new Sequelize(config.conectionString, {
+      dialect: 'postgres',
+      define: {
+        underscored: true,
+      },
+    });
     this.defineModels();
 
     // this is legacy
