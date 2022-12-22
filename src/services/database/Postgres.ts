@@ -33,6 +33,10 @@ export default class DataBase {
     this.createPool();
   }
 
+  public createSchemas = async () => {
+    await this.sequelize.sync();
+  };
+
   private createPool = () => {
     this.pool = new Pool({ connectionString: this.config.conectionString });
   };
