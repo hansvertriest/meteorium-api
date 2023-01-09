@@ -1,6 +1,7 @@
 // Node
 import express from 'express';
 import { Pool } from 'pg';
+import Postgres from '../services/database/Postgres.js';
 
 // Classes
 import { ShowerController, ObservationController } from '../controllers/index.js';
@@ -8,13 +9,15 @@ import { ShowerController, ObservationController } from '../controllers/index.js
 export default class Router {
   private pool: Pool;
   private app: express.Application;
+  private db: Postgres;
 
   private showerController: ShowerController;
   private observationController: ObservationController;
 
-  constructor(app: express.Application, pool: Pool) {
+  constructor(app: express.Application, pool: Pool, db: Postgres) {
     this.app = app;
     this.pool = pool;
+    this.db = db;
 
     this.registerControllers();
     this.registerRoutes();
@@ -22,7 +25,7 @@ export default class Router {
 
   registerControllers = () => {
     this.showerController = new ShowerController(this.pool);
-    this.observationController = new ObservationController(this.pool);
+    this.observationController = new ObservationController(this.db);
   };
 
   registerRoutes = () => {

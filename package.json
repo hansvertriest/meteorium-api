@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "Find the live project here at [the Meteroium](www.meteorium.space).<br> CAMS-data references:<br> P. Jenniskens, J. Baggaley, I. Crumpton, P. Aldous, P. Pokorny, D. Janches, P. S. Gural, D. Samuels, J. Albers, A. Howell, C. Johannink, M. Breukers, M. Odeh, N. Moskovitz, J. Collison, S. Ganju, 2018. A survey of southern hemisphere meteor showers. Planetary Space Science 154, 21–29.",
   "main": "dist/src/index.js",
+  "type": "module",
   "scripts": {
     "prebuild": "npx eslint && tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "prestart": "yarn run build",
     "start": "NODE_ENV=production node .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "predev": "yarn run build",
-    "dev": "NODE_ENV=development node --inspect .",
+    "dev": "NODE_ENV=development node --inspect --loader ts-node/esm ./src/index.ts",
     "dev:watch": "yarn nodemon -e ts --exec yarn dev"
   },
   "repository": {
@@ -33,6 +33,7 @@
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
     "pg": "^8.7.1",
+    "sequelize": "^6.25.3",
     "ts-node": "^10.4.0"
   },
   "devDependencies": {

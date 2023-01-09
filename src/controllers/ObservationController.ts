@@ -6,17 +6,19 @@ import dayjs from 'dayjs';
 // Helpers
 import { convertToLegacyFormat, convertDateToLegacy } from '../helpers/convertToLegacyFormat.js';
 import { getDeltaDegreeOfVisibilityCone } from '../helpers/calculations.js';
+import Postgres from '../services/database/Postgres.js';
 
 // Types
 import { IObservationWithShower, IObservationWithShowerLegacy, IShowerAtLocationLegacy } from '../../d.types.js';
+import { QueryTypes } from 'sequelize';
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export default class ObservationController {
-  private pool: Pool;
+  private db: Postgres;
 
-  constructor(pool: Pool) {
-    this.pool = pool;
+  constructor(db: Postgres) {
+    this.db = db;
   }
 
   getAtDate = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
@@ -25,21 +27,26 @@ export default class ObservationController {
     try {
       // Parse to YYMMDD
       const dateComponents = date.split('-');
-      const dateParsed = dateComponents[2] + dateComponents[1] + dateComponents[0];
+      const dateParsed = dateComponents[0] + dateComponents[1] + dateComponents[2];
 
       if (dateParsed.length !== 6 && dateParsed.length !== 8) throw { code: 412, msg: 'Date is not structured as "dd-mm-yy" or "dd-mm-yyyy"' };
 
-      const q = await this.pool.query<IObservationWithShowerLegacy>(`
+      const q = await this.db.sequelize.query(
+        `
                 SELECT *
                 FROM observations
                 FULL JOIN showers
                 ON observations.iau_no=showers.iau_no
-                WHERE observations.date='${new Date([dateComponents[2], dateComponents[1], dateComponents[0]].join('-')).toISOString()}';
-            `);
+                WHERE DATE(observations.date) = '${dateParsed}';
+            `,
+        {
+          type: QueryTypes.SELECT,
+        }
+      );
 
-      if (q.rows.length === 0) throw { code: 404, msg: 'Could not find any observations at this date.' };
+      if (q.length === 0) throw { code: 404, msg: 'Could not find any observations at this date.' };
 
-      const result: IObservationWithShower[] = convertToLegacyFormat(q.rows);
+      const result: IObservationWithShower[] = convertToLegacyFormat(q as IObservationWithShowerLegacy[] | IShowerAtLocationLegacy[]);
 
       return res.json({
         date,
@@ -59,20 +66,25 @@ export default class ObservationController {
         freq: number;
       }
 
-      const qDailyFrequencies = await this.pool.query<IRow>(`
-                SELECT
-                    count(observations.date) as freq,
-                    observations.date as date
-                FROM observations
-                GROUP BY date
-                ORDER BY date ASC
-            `);
+      const qDailyFrequencies = await this.db.sequelize.query<IRow>(
+        `
+          SELECT
+              count(observations.date) as freq,
+              observations.date as date
+          FROM observations
+          GROUP BY date
+          ORDER BY date ASC
+        `,
+        {
+          type: QueryTypes.SELECT,
+        }
+      );
 
-      if (qDailyFrequencies.rows.length === 0) throw { code: 404, msg: 'Could not find any observations.' };
+      if (qDailyFrequencies.length === 0) throw { code: 404, msg: 'Could not find any observations.' };
 
       // Loop through rows and order in year-arrays
       const dailyFreqPerYear: { [index: string]: IRow[] } = {};
-      qDailyFrequencies.rows.forEach((row) => {
+      qDailyFrequencies.forEach((row) => {
         const date = dayjs(row.date);
         const year = date.year();
 
@@ -166,9 +178,11 @@ export default class ObservationController {
                 ${limit ? 'LIMIT ' + limit : ''};
             `;
 
-      const q = await this.pool.query<{ date: string; count: number }>(queryString);
+      const q = await this.db.sequelize.query<{ date: string; count: number }>(queryString, {
+        type: QueryTypes.SELECT,
+      });
 
-      const resultLegacy: { date: string; count: number }[] = q.rows.map((row) => {
+      const resultLegacy: { date: string; count: number }[] = q.map((row) => {
         return {
           count: row.count,
           date: convertDateToLegacy(new Date(row.date)),
@@ -177,7 +191,7 @@ export default class ObservationController {
 
       const resultLegacySorted = resultLegacy.sort((a, b) => (Number(a.count) < Number(b.count) ? 1 : -1));
 
-      if (q.rows.length === 0) throw { code: 404, msg: 'Could not find any observations at this date.' };
+      if (q.length === 0) throw { code: 404, msg: 'Could not find any observations at this date.' };
 
       return res.json({
         dates: resultLegacySorted,
@@ -283,9 +297,11 @@ export default class ObservationController {
                 ;
             `;
 
-      const q = await this.pool.query<IShowerAtLocationLegacy>(showersQuery);
+      const q = await this.db.sequelize.query<IShowerAtLocationLegacy>(showersQuery, {
+        type: QueryTypes.SELECT,
+      });
 
-      const rowsFormated = convertToLegacyFormat(q.rows);
+      const rowsFormated = convertToLegacyFormat(q);
 
       res.json({
         showers: rowsFormated,

@@ -9,6 +9,7 @@ import GlobalMiddleware from './middleware/GlobalMiddleware.js';
 
 // types
 import { IConfig } from './services/config/config.types.js';
+import Postgres from './services/database/Postgres.js';
 
 export default class App {
   public app: express.Application;
@@ -16,10 +17,12 @@ export default class App {
   private pgPool: Pool;
   private config: IConfig;
   private router: Router;
+  public db: Postgres;
 
-  constructor(config: IConfig, pool: Pool) {
+  constructor(config: IConfig, pool: Pool, db: Postgres) {
     this.config = config;
     this.pgPool = pool;
+    this.db = db;
 
     this.createExpress();
     this.createServer();
@@ -46,7 +49,7 @@ export default class App {
   }
 
   private createRouter = (): void => {
-    this.router = new Router(this.app, this.pgPool);
+    this.router = new Router(this.app, this.pgPool, this.db);
   };
 
   public start = (): void => {

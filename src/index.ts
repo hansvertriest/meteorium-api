@@ -2,9 +2,9 @@
 import { Pool } from 'pg';
 
 // Classes
-import App from './App.js';
+import App from './app.js';
 import Config from './services/config/Config.js';
-import Postgres from './services/database/Postgres.js';
+import DataBase from './services/database/Postgres.js';
 
 // types
 import { IConfig } from './services/config/config.types.js';
@@ -17,11 +17,11 @@ process.env.TZ = 'Africa/Abidjan';
 
 try {
   // Create a postgres pool
-  const pg = new Postgres(config.postgres);
-  const pool: Pool = pg.pool;
+  const db = new DataBase(config.postgres);
+  const pool: Pool = db.pool;
 
   // create application
-  const app: App = new App(config, pool);
+  const app: App = new App(config, pool, db);
   app.start();
 
   // Stop all running processes
