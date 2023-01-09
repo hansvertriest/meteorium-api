@@ -2,6 +2,9 @@
 import { Sequelize, DataTypes, ModelDefined, Model } from 'sequelize';
 import { Source } from '../../../sources/d.types.js';
 
+// Types
+import { Network } from '../../../types/Observation.js';
+
 export type ObservationType = {
   time: Date;
   date: Date;
@@ -15,7 +18,7 @@ export type ObservationType = {
   h_end: number;
   iau_no: number;
   stations: string;
-  network: number;
+  network: Network;
   source: Source;
 };
 
@@ -78,7 +81,7 @@ export default class ObservationModel {
         allowNull: false,
       },
       network: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.ENUM(...Object.values(Network)),
         allowNull: false,
       },
       source: {
@@ -88,4 +91,13 @@ export default class ObservationModel {
     };
     this.model = sq.define('observation', config);
   }
+
+  public getLatestDate = async (): Promise<Date> => {
+    const latestDate = await this.model.max<Date, Model<ObservationType, ObservationType>>('date');
+    return new Date(latestDate);
+  };
+
+  public createMultiple = async (observations: ObservationType[]) => {
+    return await this.model.bulkCreate(observations);
+  };
 }

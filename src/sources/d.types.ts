@@ -4,6 +4,7 @@ export enum Source {
 }
 
 export type GMNRecord = {
+  id: string;
   beginningDate: Date;
   beginningTime: string;
   iauNo: number;
