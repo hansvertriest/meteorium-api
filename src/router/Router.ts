@@ -25,7 +25,7 @@ export default class Router {
 
   registerControllers = () => {
     this.showerController = new ShowerController(this.pool);
-    this.observationController = new ObservationController(this.pool, this.db);
+    this.observationController = new ObservationController(this.db);
   };
 
   registerRoutes = () => {
